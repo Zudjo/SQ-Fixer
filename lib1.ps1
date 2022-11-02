@@ -3,7 +3,7 @@
 # ILC: InLine Comment
 # MLC: MultiLine Comment
 $RegexILC = '(?smx)<!--.*?-->'
-$RegexMLCOpening = '^<!--(?!.*-->).*$'
+$RegexMLCOpening = '<!--(?!.*-->).*'
 $RegexMLCClosing = '^(?!<!--.*).*-->$'
 $RegexHTML = '(?<tag><\/?[a-zA-Z]+\s*(?<attr>\s*[a-zA-Z]+=".*"\s*)*?\s*>)'
 
