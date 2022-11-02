@@ -1,0 +1,4 @@
+# Ignoring directories for testing
+
+sample/
+test/
