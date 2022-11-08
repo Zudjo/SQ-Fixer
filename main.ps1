@@ -16,7 +16,7 @@ switch ($args[0]) {
     . ".\comment-deleter.ps1"
     $TargetDirectory = ".\test"
     $TargetExtension = "html"
-    Remove-Comments $TargetDirectory $TargetExtension
+    Delete-Comments $TargetDirectory $TargetExtension
   }
   Default {
     Write-Host "Please insert a valid command."

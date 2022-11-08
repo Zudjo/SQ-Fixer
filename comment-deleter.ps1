@@ -4,8 +4,6 @@
 $RegexILC = '(?smx)<!--.*?-->'
 $RegexIsCode = '(?s)(<\s*(?<tag>\s*\w+\/?\s*)(\s*\w+=".*?"\s*)*\s*>)(<\/(\k<tag>)>)?'
 
-$Comments = []
-
 # VARIABLES
 # __________________________________________________
 
@@ -36,8 +34,15 @@ function Delete-Comment {
   Set-Content -path $FilePath -value $Lines
 }
 
-function Collect-Comments {
+function Delete-Comments {
   param([string]$TargetDirectory, [string]$TargetExtension)
+
+  Disclaim-For-Deletion
+
+  if (-not (Ask-Confirm)) {
+    Write-Host "Deletion refused."
+    exit
+  }
 
   $NumberOfComments = 0
 
@@ -60,18 +65,31 @@ function Collect-Comments {
         # increment the counter, print the feedback and delete the comment
         $NumberOfComments += 1
         Print-Comment $Comment $File.Name $NumberOfComments
-
-        # Prompt the user for confirmation
-        if ((Read-Host -prompt "Are you sure you want to delete these comments? (Y to confirm)") -eq "Y") {
-          Delete-Comment $File.FullName $Comment
-          Write-Host "Comments deleted."
-        } else {
-          Write-Host "Deletion not executed."
-        }
       }
     }
 
   }
 
 
+}
+
+function Ask-Confirm {
+  # Prompt the user for confirmation
+  if ((Read-Host -prompt "Are you sure you want proceed? (Y to confirm)") -eq "Y") {
+    return $true
+  }
+  return $false
+}
+
+function Disclaim-For-Deletion {
+  Write-Host "
+  This command will delete every commented code,
+  for each file of the specified extension
+  and under the specified directory and all its sub-directories.
+
+  Please note that undesired deletions may happen,
+  therefore we suggest to run this command on a copy first
+  and check that everything works as expected,
+  before modifying distributions.
+  "
 }
