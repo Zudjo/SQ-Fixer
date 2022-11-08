@@ -1,13 +1,9 @@
 Clear-Host
 # IMPORTS
 # __________________________________________________
-. ".\lib.ps1"
 
 # COSTANTS
 # __________________________________________________
-# $TargetDir = "C:\xampp\htdocs\test\contrib\themes\primaton-theme\client"
-$TargetDirectory = ".\test"
-$TargetExtension = "html"
 
 # VARIABLES
 # __________________________________________________
@@ -15,4 +11,14 @@ $TargetExtension = "html"
 # MAIN
 # __________________________________________________
 
-Remove-Comments $TargetDirectory $TargetExtension
+switch ($args[0]) {
+  "delete" {
+    . ".\comment-deleter.ps1"
+    $TargetDirectory = ".\test"
+    $TargetExtension = "html"
+    Remove-Comments $TargetDirectory $TargetExtension
+  }
+  Default {
+    Write-Host "Please insert a valid command."
+  }
+}

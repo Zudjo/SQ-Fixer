@@ -2,15 +2,17 @@
 # __________________________________________________
 # ILC: InLine Comment
 $RegexILC = '(?smx)<!--.*?-->'
-$RegexIsCode = '(?<tag><\/?[a-zA-Z]+\s*(?<attr>\s*[a-zA-Z]+=".*"\s*)*?\s*>)'
+$RegexIsCode = '(?s)(<\s*(?<tag>\s*\w+\/?\s*)(\s*\w+=".*?"\s*)*\s*>)(<\/(\k<tag>)>)?'
+
+$Comments = []
 
 # VARIABLES
 # __________________________________________________
 
 function Print-Comment {
-  param([string]$Comment, [string]$FileName)
+  param([string]$Comment, [string]$FileName, [int]$NumberOfComments)
 
-  Write-Host "File: $FileName"
+  Write-Host "File: $FileName | Comment number: $NumberOfComments"
   Write-Host "--------------------------------------------------"
   Write-Host $Comment
   Write-Host
@@ -34,8 +36,10 @@ function Delete-Comment {
   Set-Content -path $FilePath -value $Lines
 }
 
-function Remove-Comments {
+function Collect-Comments {
   param([string]$TargetDirectory, [string]$TargetExtension)
+
+  $NumberOfComments = 0
 
   # Get all files and loop through them
   $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.$TargetExtension"
@@ -51,7 +55,19 @@ function Remove-Comments {
 
       # Check if it's code or helpful info
       if (Check-Comment $Comment) {
-        Print-Comment $Comment $File.Name
+
+        # If it's commented code:
+        # increment the counter, print the feedback and delete the comment
+        $NumberOfComments += 1
+        Print-Comment $Comment $File.Name $NumberOfComments
+
+        # Prompt the user for confirmation
+        if ((Read-Host -prompt "Are you sure you want to delete these comments? (Y to confirm)") -eq "Y") {
+          Delete-Comment $File.FullName $Comment
+          Write-Host "Comments deleted."
+        } else {
+          Write-Host "Deletion not executed."
+        }
       }
     }
 
