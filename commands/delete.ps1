@@ -1,8 +1,5 @@
 # COSTANTS
 # __________________________________________________
-# ILC: InLine Comment
-$RegexILC = '(?smx)<!--.*?-->'
-$RegexIsCode = '(?s)(<\s*(?<tag>\s*\w+\/?\s*)(\s*\w+=".*?"\s*)*\s*>)(<\/(\k<tag>)>)?'
 
 # VARIABLES
 # __________________________________________________
@@ -40,11 +37,14 @@ function Delete-Comments {
   Disclaim-For-Deletion
 
   if (-not (Ask-Confirm)) {
-    Write-Host "Deletion refused."
+    Write-Host "`nDeletion refused."
     exit
+  } else {
+    Clear-Host
   }
 
   $NumberOfComments = 0
+  . ".\extensions\$TargetExtension\regexComment.ps1"
 
   # Get all files and loop through them
   $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.$TargetExtension"
@@ -55,6 +55,9 @@ function Delete-Comments {
 
     # Get everything that is a comment
     $Comments = (Select-String -Pattern $RegexILC -InputObject $Lines -AllMatches).Matches
+    if ($RegexMLC -ne "" -or $RegexMLC -ne $null) {
+      $Comments += (Select-String -Pattern $RegexMLC -InputObject $Lines -AllMatches).Matches
+    }
 
     ForEach ($Comment in $Comments) {
 
@@ -65,11 +68,13 @@ function Delete-Comments {
         # increment the counter, print the feedback and delete the comment
         $NumberOfComments += 1
         Print-Comment $Comment $File.Name $NumberOfComments
+        # Delete-Comment $File.FullName $Comment
       }
     }
 
   }
 
+  Write-Host "`n`nThese comments have been deleted.`n"
 
 }
 
@@ -87,9 +92,8 @@ function Disclaim-For-Deletion {
   for each file of the specified extension
   and under the specified directory and all its sub-directories.
 
-  Please note that undesired deletions may happen,
+  Please note that UNDESIRED DELITIONS MAY HAPPEN,
   therefore we suggest to run this command on a copy first
-  and check that everything works as expected,
-  before modifying distributions.
+  and check that everything works as expected before modifying distributions.
   "
 }
