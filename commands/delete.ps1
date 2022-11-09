@@ -17,7 +17,7 @@ function Print-Comment {
 function Check-Comment {
   param([string]$Comment)
 
-  if ($Comment -match $RegexIsCode) {
+  if (($Comment -match $RegexIsCode) -and (-not ($Comment -match "(?m)^\s*\*\s"))) {
     return $true
   }
   return $false
@@ -43,19 +43,33 @@ function Delete-Comments {
     Clear-Host
   }
 
-  $NumberOfComments = 0
-  . ".\extensions\$TargetExtension\regexComment.ps1"
+  $NumberOfCommentsTotal = 0
+  $NumberOfCommentsFile = 0
+  $NumberOfFiles = 0
+  $RegexMLC = $null
+  $Feedback = "`n  Affected comments per file:`n"
+
+  if ($TargetExtension -match "c|cpp|cs|js|php") {
+    . ".\extensions\c\regexComment.ps1"
+  } else {
+    . ".\extensions\$TargetExtension\regexComment.ps1"
+  }
 
   # Get all files and loop through them
   $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.$TargetExtension"
   ForEach ($File in $Files) {
+    $NumberOfFiles += 1
 
     # Get all lines as a string
     $Lines = Get-Content -path $File.FullName -raw
 
+    # Reset comments
+    $Comments = $null
+
     # Get everything that is a comment
     $Comments = (Select-String -Pattern $RegexILC -InputObject $Lines -AllMatches).Matches
-    if ($RegexMLC -ne "" -or $RegexMLC -ne $null) {
+
+    if ($RegexMLC) {
       $Comments += (Select-String -Pattern $RegexMLC -InputObject $Lines -AllMatches).Matches
     }
 
@@ -66,15 +80,24 @@ function Delete-Comments {
 
         # If it's commented code:
         # increment the counter, print the feedback and delete the comment
-        $NumberOfComments += 1
-        Print-Comment $Comment $File.Name $NumberOfComments
+        $NumberOfCommentsFile += 1
+        $NumberOfCommentsTotal += 1
+        Print-Comment $Comment $File.Name $NumberOfCommentsTotal
         # Delete-Comment $File.FullName $Comment
       }
     }
 
+    if ($NumberOfCommentsFile) {
+      $Feedback += "  $NumberOfCommentsFile | " + $File.FullName + "`n"
+    }
+
+    $NumberOfCommentsFile = 0
   }
 
-  Write-Host "`n`nThese comments have been deleted.`n"
+  Write-Host "  These comments have been deleted.
+  Total comments deleted: $NumberOfCommentsTotal
+  Total files checked: $NumberOfFiles"
+  Write-Host $Feedback
 
 }
 

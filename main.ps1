@@ -11,7 +11,7 @@ Clear-Host
 # FUNCTIONS
 # __________________________________________________
 function Set-TargetExtension {
-  $Extensions = @("html", "cs")
+  $Extensions = @("html", "cs", "php", "c", "cpp", "js")
 
   Write-Host
   For ($i = 1; $i -le $Extensions.Length; ++$i) {
@@ -21,10 +21,10 @@ function Set-TargetExtension {
 
   $Choice = Read-Host -prompt "Choose the file extension to check"
 
-  if ($Choice -le 0) {
+  if ([int]$Choice -le 0) {
     exit
   } else {
-    if (-not ($Choice -gt $extensions.Length)) {
+    if ([int]$Choice -le $Extensions.Length) {
       return $Extensions[$Choice-1]
     } else {
       Clear-Host
@@ -40,6 +40,7 @@ function Set-TargetExtension {
 switch ($args[0]) {
   "delete" {
     . ".\commands\delete.ps1"
+    # $TargetDirectory = "C:\Users\g.ziu\Desktop\ws_sites\primaton\versions\v1\test\contrib\themes\primaton-theme"
     $TargetDirectory = ".\test"
     $TargetExtension = Set-TargetExtension
     Delete-Comments $TargetDirectory $TargetExtension
