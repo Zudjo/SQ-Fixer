@@ -12,7 +12,10 @@ function Update-ImgTag {
   param([string]$FilePath, [string]$ImgTag)
 
   $Lines = Get-Content -path $FilePath -raw
-  $Updated = $ImgTag.Replace(">", " alt=`"`">")
+
+  $ImgTag = $ImgTag.Replace("/>", ">")
+  $Updated = $ImgTag.Replace(">", " alt=`"`"/>")
+
   $Lines = $Lines.replace($ImgTag, $Updated)
   Set-Content -path $FilePath -value $Lines
 }
@@ -41,7 +44,7 @@ function Add-Alt {
       $NumberOfImgTagsFile += 1
       $NumberOfImgTagsTotal += 1
       Print-ImgTag $ImgTag $File.Name $NumberOfImgTagsTotal
-      Update-ImgTag $File.FullName $Comment
+      Update-ImgTag $File.FullName $ImgTag
 
     }
 
