@@ -25,12 +25,26 @@ function Set-TargetExtension {
     exit
   } else {
     if ([int]$Choice -le $Extensions.Length) {
+      Clear-Host
       return $Extensions[$Choice-1]
     } else {
       Clear-Host
-      Write-Host "Please, select a valid option from the list"
+      Write-Host "`nSelect a valid option from the list`n"
       Set-TargetExtension
     }
+  }
+}
+
+function Set-TargetDirectory {
+  $Path = Read-Host -prompt "`nInsert path to check"
+
+  if (Test-Path $Path){
+    Clear-Host
+    return $Path
+  } else {
+    Clear-Host
+    Write-Host "`nThe inserted path doesn't exists.`n"
+    Set-TargetDirectory
   }
 }
 
@@ -40,12 +54,18 @@ function Set-TargetExtension {
 switch ($args[0]) {
   "delete" {
     . ".\commands\delete.ps1"
-    # $TargetDirectory = "C:\Users\g.ziu\Desktop\ws_sites\primaton\versions\v1\test\contrib\themes\primaton-theme"
-    $TargetDirectory = ".\test"
+    $TargetDirectory = Set-TargetDirectory
     $TargetExtension = Set-TargetExtension
     Delete-Comments $TargetDirectory $TargetExtension
   }
+
+  "add-alt" {
+    . ".\commands\add-alt.ps1"
+    $TargetDirectory = Set-TargetDirectory
+    Add-Alt $TargetDirectory
+  }
+
   Default {
-    Write-Host "Please insert a valid command."
+    Write-Host "`n  Insert a valid command.`n"
   }
 }

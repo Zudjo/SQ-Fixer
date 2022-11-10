@@ -37,7 +37,7 @@ function Delete-Comments {
   Disclaim-For-Deletion
 
   if (-not (Ask-Confirm)) {
-    Write-Host "`nDeletion refused."
+    Write-Host "`nDeletion refused.`n"
     exit
   } else {
     Clear-Host
