@@ -13,10 +13,11 @@ function Update-ImgTag {
 
   $Lines = Get-Content -path $FilePath -raw
 
+  $OldImgTag = $ImgTag
   $ImgTag = $ImgTag.Replace("/>", ">")
-  $Updated = $ImgTag.Replace(">", " alt=`"`"/>")
+  $Updated = $ImgTag.Replace(">", " alt=`"`" />")
 
-  $Lines = $Lines.replace($ImgTag, $Updated)
+  $Lines = $Lines.replace($OldImgTag, $Updated)
   Set-Content -path $FilePath -value $Lines
 }
 
@@ -24,7 +25,10 @@ function Add-Alt {
   param([string]$TargetDirectory)
 
   # Get all files and loop through them
-  $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.*htm*"
+  try {
+    $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.*htm*"
+    $Files += Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.php"
+  } catch {}
   ForEach ($File in $Files) {
 
     $NumberOfFiles += 1
@@ -45,7 +49,6 @@ function Add-Alt {
       $NumberOfImgTagsTotal += 1
       Print-ImgTag $ImgTag $File.Name $NumberOfImgTagsTotal
       Update-ImgTag $File.FullName $ImgTag
-
     }
 
     if ($NumberOfImgTagsFile) {

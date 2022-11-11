@@ -49,7 +49,7 @@ function Delete-Comments {
   $RegexMLC = $null
   $Feedback = "`n  Affected comments per file:`n"
 
-  if ($TargetExtension -match "c|cpp|cs|js|php") {
+  if ($TargetExtension -match "c|cpp|cs|js|php|css") {
     . ".\extensions\c\regexComment.ps1"
   } else {
     . ".\extensions\$TargetExtension\regexComment.ps1"

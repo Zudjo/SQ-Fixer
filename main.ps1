@@ -11,7 +11,7 @@ Clear-Host
 # FUNCTIONS
 # __________________________________________________
 function Set-TargetExtension {
-  $Extensions = @("html", "cs", "php", "c", "cpp", "js")
+  $Extensions = @("html", "cs", "php", "c", "cpp", "js", "css", "cshtml", "asp", "aspx")
 
   Write-Host
   For ($i = 1; $i -le $Extensions.Length; ++$i) {
@@ -57,15 +57,25 @@ switch ($args[0]) {
     $TargetDirectory = Set-TargetDirectory
     $TargetExtension = Set-TargetExtension
     Delete-Comments $TargetDirectory $TargetExtension
+    break
   }
 
   "add-alt" {
     . ".\commands\add-alt.ps1"
     $TargetDirectory = Set-TargetDirectory
     Add-Alt $TargetDirectory
+    break
+  }
+
+  "var-to-let" {
+    . ".\commands\var-to-let.ps1"
+    $TargetDirectory = Set-TargetDirectory
+    Change-Var $TargetDirectory
+    break
   }
 
   Default {
     Write-Host "`n  Insert a valid command.`n"
+    break
   }
 }
