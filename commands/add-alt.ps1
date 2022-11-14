@@ -14,8 +14,9 @@ function Update-ImgTag {
   $Lines = Get-Content -path $FilePath -raw
 
   $OldImgTag = $ImgTag
-  $ImgTag = $ImgTag.Replace("/>", ">")
-  $Updated = $ImgTag.Replace(">", " alt=`"`" />")
+  $ImgTag = $ImgTag -replace "/>", ">"
+  $ImgTag = $ImgTag -replace "(?<=[`"`'])>", " >"
+  $Updated = $ImgTag -replace "(?<![\?`"`'])>", " alt=`"`" />"
 
   $Lines = $Lines.replace($OldImgTag, $Updated)
   Set-Content -path $FilePath -value $Lines
@@ -39,8 +40,8 @@ function Add-Alt {
     # Reset comments
     $ImgTags = $null
 
-    # Get everything that is a comment
-    $ImgTags = (Select-String -Pattern "<ima?ge?(?!.*alt=`".*?`").*?>" -InputObject $Lines -AllMatches).Matches
+    # Get everything that is an img tag
+    $ImgTags = (Select-String -Pattern "<ima?ge?(?!.*alt=`".*?`").*?[^\?]>" -InputObject $Lines -AllMatches).Matches
 
     ForEach ($ImgTag in $ImgTags) {
 

@@ -83,7 +83,7 @@ function Delete-Comments {
         $NumberOfCommentsFile += 1
         $NumberOfCommentsTotal += 1
         Print-Comment $Comment $File.Name $NumberOfCommentsTotal
-        # Delete-Comment $File.FullName $Comment
+        Delete-Comment $File.FullName $Comment
       }
     }
 
