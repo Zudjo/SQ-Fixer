@@ -32,16 +32,19 @@ function Delete-Comment {
 }
 
 function Delete-Comments {
-  param([string]$TargetDirectory, [string]$TargetExtension)
+  param([string]$TargetDirectory, [string]$TargetExtension, [bool]$Disclaimer)
 
-  Disclaim-For-Deletion
-
-  if (-not (Ask-Confirm)) {
-    Write-Host "`nDeletion refused.`n"
-    exit
-  } else {
-    Clear-Host
+  if ($Disclaimer) {
+    Disclaim-For-Deletion
+    if (-not (Ask-Confirm)) {
+      Write-Host "`nDeletion refused.`n"
+      exit
+    } else {
+      Clear-Host
+    }
   }
+
+
 
   $NumberOfCommentsTotal = 0
   $NumberOfCommentsFile = 0
@@ -49,7 +52,7 @@ function Delete-Comments {
   $RegexMLC = $null
   $Feedback = "`n  Affected comments per file:`n"
 
-  if ($TargetExtension -match "c|cpp|cs|js|php|css") {
+  if ($TargetExtension -match "^c$|^cpp$|^cs$|^js$|^php$|^css$") {
     . ".\extensions\c\regexComment.ps1"
   } else {
     . ".\extensions\$TargetExtension\regexComment.ps1"
@@ -58,6 +61,7 @@ function Delete-Comments {
   # Get all files and loop through them
   $Files = Get-ChildItem -path $TargetDirectory -recurse -file -filter "*.$TargetExtension"
   ForEach ($File in $Files) {
+
     $NumberOfFiles += 1
 
     # Get all lines as a string

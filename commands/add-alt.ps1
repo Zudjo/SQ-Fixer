@@ -41,7 +41,7 @@ function Add-Alt {
     $ImgTags = $null
 
     # Get everything that is an img tag
-    $ImgTags = (Select-String -Pattern "<ima?ge?(?!.*alt=`".*?`").*?[^\?]>" -InputObject $Lines -AllMatches).Matches
+    $ImgTags = (Select-String -Pattern "<ima?ge?\s(?!.*alt=`".*?`").*?[^\?]>" -InputObject $Lines -AllMatches).Matches
 
     ForEach ($ImgTag in $ImgTags) {
 

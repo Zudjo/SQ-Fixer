@@ -4,6 +4,7 @@ Clear-Host
 
 # COSTANTS
 # __________________________________________________
+$Extensions = @("html", "cs", "php", "c", "cpp", "js", "css", "cshtml", "asp", "aspx")
 
 # VARIABLES
 # __________________________________________________
@@ -11,8 +12,6 @@ Clear-Host
 # FUNCTIONS
 # __________________________________________________
 function Set-TargetExtension {
-  $Extensions = @("html", "cs", "php", "c", "cpp", "js", "css", "cshtml", "asp", "aspx")
-
   Write-Host
   For ($i = 1; $i -le $Extensions.Length; ++$i) {
     Write-Host "  $i. "$Extensions[$i-1]
@@ -70,6 +69,20 @@ switch ($args[0]) {
   "var-to-let" {
     . ".\commands\var-to-let.ps1"
     $TargetDirectory = Set-TargetDirectory
+    Change-Var $TargetDirectory >> "pino.txt"
+    # Out-File -InputObject (Change-Var $TargetDirectory) -FilePath "." -Append
+    break
+  }
+
+  "all" {
+    . ".\commands\delete.ps1"
+    . ".\commands\add-alt.ps1"
+    . ".\commands\var-to-let.ps1"
+    $TargetDirectory = Set-TargetDirectory
+    ForEach ($Extension in $Extensions) {
+      Delete-Comments $TargetDirectory $Extension $false
+    }
+    Add-Alt $TargetDirectory
     Change-Var $TargetDirectory
     break
   }
