@@ -1,25 +1,18 @@
-function Print-Var {
-  param([string]$Var, [string]$FileName, [int]$NumberOfVars)
+function Write-Log {
+  param([string]$FileName)
   $s = ""
 
-  $s += "File: $FileName | Var number: $NumberOfVars"
-  $s += "--------------------------------------------------"
-  $s += "$Var"
+  $s += "Modified file: $FileName"
   $s += "`n`n"
 
-
-  Out-File -FilePath "var-to-let.log" -InputObject $s -Append
+  Out-File -FilePath ".\logs\var-to-let.log" -InputObject $s -Append
 }
 
 function Update-Var {
   param([string]$FilePath)
 
   $Lines = Get-Content -path $FilePath -raw
-  # $Comments = (Select-String -Pattern $RegexILC -InputObject $Lines -AllMatches).Matches
-
   $Lines = $Lines -replace "(?<!\w)var[^\w]","let "
-  # Write-Host "---------------------------------------"
-  # Write-Host $Lines
   Set-Content -path $FilePath -value $Lines
 }
 
@@ -39,7 +32,7 @@ function Change-Var {
     $Lines = Get-Content -path $File.FullName -raw
 
     Update-Var $File.FullName
-    Print-Var $Lines $File.FullName 0
+    Write-Log $File.FullName
   }
 }
 

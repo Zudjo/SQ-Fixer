@@ -1,11 +1,12 @@
 function Print-ImgTag {
   param([string]$ImgTag, [string]$FileName, [int]$NumberOfImgTags)
+  $S = ""
 
-  Write-Host "File: $FileName | ImgTag number: $NumberOfImgTags"
-  Write-Host "--------------------------------------------------"
-  Write-Host $ImgTag
-  Write-Host
-  Write-Host
+  $S += "File: $FileName | ImgTag number: $NumberOfImgTags"
+  $S += "--------------------------------------------------"
+  $S += $ImgTag
+  $S +=
+  $S +=
 }
 
 function Update-ImgTag {

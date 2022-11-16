@@ -69,8 +69,7 @@ switch ($args[0]) {
   "var-to-let" {
     . ".\commands\var-to-let.ps1"
     $TargetDirectory = Set-TargetDirectory
-    Change-Var $TargetDirectory >> "pino.txt"
-    # Out-File -InputObject (Change-Var $TargetDirectory) -FilePath "." -Append
+    Change-Var $TargetDirectory
     break
   }
 
