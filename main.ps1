@@ -76,6 +76,13 @@ switch ($args[0]) {
     break
   }
 
+  "del-statics" {
+    . ".\commands\del-statics.ps1"
+    $TargetDirectory = Set-TargetDirectory
+    Del-statics $TargetDirectory
+    break
+  }
+
   "all" {
     . ".\commands\delete.ps1"
     $TargetDirectory = Set-TargetDirectory
