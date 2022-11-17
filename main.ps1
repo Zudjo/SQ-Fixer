@@ -55,6 +55,7 @@ switch ($args[0]) {
     . ".\commands\delete.ps1"
     $TargetDirectory = Set-TargetDirectory
     $TargetExtension = Set-TargetExtension
+    Out-File -FilePath ".\logs\delete.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Delete-Comments $TargetDirectory $TargetExtension
     break
   }
@@ -62,6 +63,7 @@ switch ($args[0]) {
   "add-alt" {
     . ".\commands\add-alt.ps1"
     $TargetDirectory = Set-TargetDirectory
+    Out-File -FilePath ".\logs\add-alt.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Add-Alt $TargetDirectory
     break
   }
@@ -69,19 +71,24 @@ switch ($args[0]) {
   "var-to-let" {
     . ".\commands\var-to-let.ps1"
     $TargetDirectory = Set-TargetDirectory
+    Out-File -FilePath ".\logs\var-to-let.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Change-Var $TargetDirectory
     break
   }
 
   "all" {
     . ".\commands\delete.ps1"
-    . ".\commands\add-alt.ps1"
-    . ".\commands\var-to-let.ps1"
     $TargetDirectory = Set-TargetDirectory
+    Out-File -FilePath ".\logs\delete.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     ForEach ($Extension in $Extensions) {
       Delete-Comments $TargetDirectory $Extension $false
     }
+    Write-Host "`n`n`n"
+    . ".\commands\add-alt.ps1"
+    Out-File -FilePath ".\logs\add-alt.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Add-Alt $TargetDirectory
+    . ".\commands\var-to-let.ps1"
+    Out-File -FilePath ".\logs\var-to-let.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Change-Var $TargetDirectory
     break
   }

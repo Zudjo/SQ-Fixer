@@ -4,14 +4,15 @@
 # VARIABLES
 # __________________________________________________
 
-function Print-Comment {
-  param([string]$Comment, [string]$FileName, [int]$NumberOfComments)
+function Save-Log {
+  param([string]$Comment, [int]$NumberOfComments)
+  $S = ""
 
-  Write-Host "File: $FileName | Comment number: $NumberOfComments"
-  Write-Host "--------------------------------------------------"
-  Write-Host $Comment
-  Write-Host
-  Write-Host
+  $S += "Comment number: $NumberOfComments`n"
+  $S += "------------------------------`n"
+  $S += "$Comment`n`n"
+
+  Out-File -FilePath ".\logs\delete.log" -InputObject $S -Append -Encoding "utf8"
 }
 
 function Check-Comment {
@@ -44,13 +45,11 @@ function Delete-Comments {
     }
   }
 
-
-
+  $Feedback = "Affected comments per file`n`n"
   $NumberOfCommentsTotal = 0
   $NumberOfCommentsFile = 0
   $NumberOfFiles = 0
   $RegexMLC = $null
-  $Feedback = "`n  Affected comments per file:`n"
 
   if ($TargetExtension -match "^c$|^cpp$|^cs$|^js$|^php$|^css$") {
     . ".\extensions\c\regexComment.ps1"
@@ -77,6 +76,11 @@ function Delete-Comments {
       $Comments += (Select-String -Pattern $RegexMLC -InputObject $Lines -AllMatches).Matches
     }
 
+    if ($Comments.Length -gt 0) {
+      $S = "" + $File.FullName + "`n____________________________________________________________`n"
+      Out-File -FilePath ".\logs\delete.log" -InputObject $S -Append -Encoding "utf8"
+    }
+
     ForEach ($Comment in $Comments) {
 
       # Check if it's code or helpful info
@@ -86,7 +90,8 @@ function Delete-Comments {
         # increment the counter, print the feedback and delete the comment
         $NumberOfCommentsFile += 1
         $NumberOfCommentsTotal += 1
-        Print-Comment $Comment $File.Name $NumberOfCommentsTotal
+
+        Save-Log $Comment $NumberOfCommentsTotal
         Delete-Comment $File.FullName $Comment
       }
     }
@@ -98,10 +103,15 @@ function Delete-Comments {
     $NumberOfCommentsFile = 0
   }
 
-  Write-Host "  These comments have been deleted.
-  Total comments deleted: $NumberOfCommentsTotal
-  Total files checked: $NumberOfFiles"
-  Write-Host $Feedback
+  if ($NumberOfCommentsTotal) {
+    $S = "-------`n$TargetExtension`n-------`n"
+    $S += "  Total comments deleted: $NumberOfCommentsTotal`n"
+    $S += "  Total files checked: $NumberOfFiles`n`n"
+    $S += "$Feedback`n`n`n`n"
+    Write-Host $S
+  } else {
+    Write-Host "Nothing found for $TargetExtension"
+  }
 
 }
 

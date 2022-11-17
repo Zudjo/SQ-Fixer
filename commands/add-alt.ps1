@@ -1,12 +1,12 @@
-function Print-ImgTag {
+function Save-Log {
   param([string]$ImgTag, [string]$FileName, [int]$NumberOfImgTags)
   $S = ""
 
-  $S += "File: $FileName | ImgTag number: $NumberOfImgTags"
-  $S += "--------------------------------------------------"
-  $S += $ImgTag
-  $S +=
-  $S +=
+  $S += "File: $FileName | ImgTag number: $NumberOfImgTags`n"
+  $S += "--------------------------------------------------`n"
+  $S += "$ImgTag`n`n"
+
+  Out-File -FilePath ".\logs\add-alt.log" -InputObject $S -Append -Encoding "utf8"
 }
 
 function Update-ImgTag {
@@ -34,6 +34,7 @@ function Add-Alt {
   ForEach ($File in $Files) {
 
     $NumberOfFiles += 1
+    $Feedback = "Affected 'img' tags per file`n`n"
 
     # Get all lines as a string
     $Lines = Get-Content -path $File.FullName -raw
@@ -49,13 +50,23 @@ function Add-Alt {
       # increment the counter, print the feedback and update the tag
       $NumberOfImgTagsFile += 1
       $NumberOfImgTagsTotal += 1
-      Print-ImgTag $ImgTag $File.Name $NumberOfImgTagsTotal
+      Save-Log $ImgTag $File.Name $NumberOfImgTagsTotal
       Update-ImgTag $File.FullName $ImgTag
     }
 
     if ($NumberOfImgTagsFile) {
       $Feedback += "  $NumberOfImgTagsFile | " + $File.FullName + "`n"
     }
+
+    if ($NumberOfImgTagsTotal) {
+      $S += "  Total img tags deleted: $NumberOfImgTagsTotal`n"
+      $S += "  Total files checked: $NumberOfFiles`n`n"
+      $S += "$Feedback`n`n`n`n"
+      Write-Host $S
+    } else {
+      Write-Host "'img' tags not found"
+    }
+
 
     $NumberOfImgTagsFile = 0
   }
