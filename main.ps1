@@ -97,6 +97,8 @@ switch ($args[0]) {
     . ".\commands\var-to-let.ps1"
     Out-File -FilePath ".\logs\var-to-let.log" -InputObject "++++++++++++++++++++" -Append -Encoding "utf8"
     Change-Var $TargetDirectory
+    . ".\commands\del-statics.ps1"
+    Del-statics $TargetDirectory
     break
   }
 

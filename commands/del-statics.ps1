@@ -1,9 +1,4 @@
 
-
-# Variables
-# $Directories = @("docs", "dist")
-# $Extensions = @("html", "map")
-
 # Main
 function Del-Statics {
   param([string]$TargetDirectory)
