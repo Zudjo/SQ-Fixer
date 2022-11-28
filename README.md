@@ -26,3 +26,14 @@ Deletes all `html` and `map` files under `client\docs` or `client\dist`.
 ##### all
 
 Executes all commands above at once.
+
+
+## Disclaimer
+
+This command will delete every commented code,
+for each file of the specified extension
+and under the specified directory and all its sub-directories.
+
+Please note that UNDESIRED DELITIONS MAY HAPPEN,
+therefore we suggest to run this command on a copy first
+and check that everything works as expected before modifying distributions.
